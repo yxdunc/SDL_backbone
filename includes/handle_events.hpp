@@ -9,20 +9,29 @@ template <typename T>
 class handle_events
 {
 	public:
-		handle_events( );
+		handle_events( void );
 		~handle_events( void );
 
-		SDL_Event	check(int value);
+		/* check new event */
+		SDL_Event	check(T perso);
+
+		/* add event */
 		void		add_key_event(std::string type, std::string key, bool (*func)(T));
 		void		add_event(std::string type, bool (*func)(const SDL_Event &, T));
 
 	private:
-		bool	quit(int value);
+		/* preset event functions */
+		bool	quit( const SDL_Event &e, T perso );
+		bool	key_up( const SDL_Event &e, T perso );
+		bool	key_down( const SDL_Event &e, T perso );
+
 		std::map< std::string, bool (*)(const SDL_Event &, T) >	_events;
 		std::map< std::string, bool (*)(T) >					_key_down;
 		std::map< std::string, bool (*)(T) >					_key_up;
 
 };
+
+#include "handle_events.hxx"
 
 #endif //!HANDLE_EVENTS_HPP
 

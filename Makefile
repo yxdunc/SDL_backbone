@@ -6,7 +6,7 @@ ifeq ($(MODE), debug)
 endif
 CFLAGS = -Werror -Wextra -Wall $(CMODE) $(CPP11)
 CPP11 = -std=c++11
-TARGET = rename_me_in_the_Makefile(rguignar)
+TARGET = rename_me_in_the_Makefile_rguignar
 SRC_DIR = ./src
 INCLUDE_DIR = ./includes
 BUILD_DIR = ./builds

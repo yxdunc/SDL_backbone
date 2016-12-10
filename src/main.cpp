@@ -1,4 +1,5 @@
 #include "SDL.h"
+#include "handle_events.hpp"
 
 int main(int argc, char *argv[]) {
     (void)argc; (void) argv;
@@ -17,33 +18,10 @@ int main(int argc, char *argv[]) {
     red_rectangle.y = 40;
     red_rectangle.w = 40;
     red_rectangle.h = 40;
+    handle_events   events;
     while (1) {
-        SDL_Event e;
-        if (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) {
-                break;
-            }
-            else if (e.type == SDL_KEYDOWN)
-            {
-                if(e.key.keysym.sym == SDLK_LEFT)
-                {
-                   red_rectangle.x--;
-                }
-                if(e.key.keysym.sym == SDLK_RIGHT)
-                {
-                   red_rectangle.x++;
-                }
-                if(e.key.keysym.sym == SDLK_UP)
-                {
-                   red_rectangle.y--;
-                }
-                if(e.key.keysym.sym == SDLK_DOWN)
-                {
-                   red_rectangle.y++;
-                }
-            }
-        }
-
+        events.check();
+        
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, bitmapTex, NULL, NULL);
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 1);
