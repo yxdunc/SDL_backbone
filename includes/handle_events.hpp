@@ -13,21 +13,24 @@ class handle_events
 		~handle_events( void );
 
 		/* check new event */
-		SDL_Event	check(T perso);
+		bool	check(T perso);
 
 		/* add event */
-		void		add_key_event(std::string type, std::string key, bool (*func)(T));
-		void		add_event(std::string type, bool (*func)(const SDL_Event &, T));
+		void		add_key_event(int type, int key, bool (*func)(T));
+		void		add_event(int type, bool (*func)(const SDL_Event &, T));
 
 	private:
 		/* preset event functions */
 		bool	quit( const SDL_Event &e, T perso );
 		bool	key_up( const SDL_Event &e, T perso );
 		bool	key_down( const SDL_Event &e, T perso );
+		/**/
 
-		std::map< std::string, bool (*)(const SDL_Event &, T) >	_events;
-		std::map< std::string, bool (*)(T) >					_key_down;
-		std::map< std::string, bool (*)(T) >					_key_up;
+		bool	_handle_special_events(const SDL_Event &e, T perso);
+
+		std::map< int, bool (*)(const SDL_Event &, T) >	_events;
+		std::map< int, bool (*)(T) >					_key_down;
+		std::map< int, bool (*)(T) >					_key_up;
 
 };
 

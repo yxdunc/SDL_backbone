@@ -4,9 +4,6 @@
 template <typename T>
 handle_events<T>::handle_events( void )
 {
-	this->_event[SDL_QUIT] = handle_events::quit();
-	this->_event[SDL_KEYDOWN] = handle_events::key_down();
-	this->_event[SDL_KEYUP] = handle_events::key_up();
 	return ;
 }
 
@@ -18,18 +15,18 @@ handle_events<T>::~handle_events( void )
 }
 
 template <typename T>
-void		handle_events<T>::add_key_event(std::string type, std::string key, bool (*func)(T))
+void		handle_events<T>::add_key_event(int type, int key, bool (*func)(T))
 {
-	if(type == "KEYDOWN")
+	if(type == SDL_KEYDOWN)
 		this->_key_down[key] = func;
-	else if(type == "KEYUP")
+	else if(type == SDL_KEYUP)
 		this->_key_up[key] = func;
 }
 
 template <typename T>
-void		handle_events<T>::add_event(std::string type, bool (*func)(const SDL_Event &, T))
+void		handle_events<T>::add_event(int type, bool (*func)(const SDL_Event &, T))
 {
-	this->_event[type] = func;
+	this->_events[type] = func;
 }
 
 template <typename T>
@@ -42,42 +39,57 @@ bool	handle_events<T>::quit( const SDL_Event &e, T perso )
 template <typename T>
 bool	handle_events<T>::key_up( const SDL_Event &e, T perso )
 {
-	bool (*func)( T );
+	typename std::map< int, bool (*)(T) >::iterator	it;
 
-	(void)e;(void)perso;
-	func = this->_key_up[e.key.keysym.sym];
-	if (func != this->_key_down.end())
-		func( perso );
+	(void)perso;
+	it = this->_key_up.find(e.key.keysym.sym);
+	if (it != this->_key_up.end())
+		it->second( perso );
 	return (true);
 }
 
 template <typename T>
 bool	handle_events<T>::key_down( const SDL_Event &e, T perso )
 {
-	bool (*func)( T );
+	typename std::map< int, bool (*)(T) >::iterator	it;
 
 	(void)perso;
-	func = this->_key_down[e.key.keysym.sym];
-	if (func != this->_key_down.end())
-		func( perso );
+	it = this->_key_down.find(e.key.keysym.sym);
+	if (it != this->_key_down.end())
+		it->second( perso );
 	return (true);
 }
 
 template <typename T>
-SDL_Event	handle_events<T>::check( T perso )
+bool	handle_events<T>::_handle_special_events( const SDL_Event &e, T perso )
+{
+	if(e.type == SDL_KEYDOWN)
+		this->key_down(e, perso);
+	else if(e.type == SDL_KEYUP)
+		this->key_up(e, perso);
+	return(true);
+}
+
+template <typename T>
+bool	handle_events<T>::check( T perso )
 {
 	SDL_Event e;
-	bool (*func)(const SDL_Event &, T perso);
+	typename std::map< int, bool (*)(const SDL_Event &, T) >::iterator it;
 
 	if (SDL_PollEvent(&e))
 	{
-		func = this->_event[e.type];
-	    if (func == this->_event.end())
+		it = this->_events.find(e.type);
+	   	_handle_special_events(e, perso);
+	    if (it != this->_events.end())
 	    {
-	    	//undifined event type
+	    	std::cout << e.type << std::endl;
+	    	return (it->second(e, perso));
 	    }
 	    else
-	    	func(perso);
+	    {
+	    	std::cout << "Unknown Event: " << e.type << std::endl;
+	    	//undifined event type
+	    }
 	}
-	return(e);
+	return(true);
 }
