@@ -81,15 +81,9 @@ bool	handle_events<T>::check( T perso )
 		it = this->_events.find(e.type);
 	   	_handle_special_events(e, perso);
 	    if (it != this->_events.end())
-	    {
-	    	std::cout << e.type << std::endl;
 	    	return (it->second(e, perso));
-	    }
-	    else
-	    {
-	    	std::cout << "Unknown Event: " << e.type << std::endl;
-	    	//undifined event type
-	    }
+//	    else
+//	    	//undifined event type
 	}
 	return(true);
 }
